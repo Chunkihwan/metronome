@@ -80,7 +80,6 @@ const Metronome = () => {
         if (!isPlaying) return;
 
         const interval = 60000 / bpm;
-        const startTime = Date.now();
         let beatCount = 1;
 
         // isRunningRef를 true로 설정
@@ -89,37 +88,34 @@ const Metronome = () => {
         const runMetronome = () => {
             if (!isRunningRef.current) return;
 
-            const currentTime = Date.now();
-            const elapsed = currentTime - startTime;
-            const expectedBeat = Math.floor(elapsed / interval) + 1;
+            let nextBeat = beatCount + 1;
+            if (nextBeat > timeSignature.beats) nextBeat = 1;
 
-            if (expectedBeat > beatCount) {
-                beatCount = expectedBeat;
-                const nextBeat = ((beatCount - 1) % timeSignature.beats) + 1;
-                setCurrentBeat(nextBeat);
-                playBeat(nextBeat);
-                console.log(`박자 ${nextBeat}/${timeSignature.beats} 재생됨`);
-            }
-
-            // 다음 프레임 요청
-            requestAnimationFrame(runMetronome);
+            beatCount = nextBeat;
+            setCurrentBeat(nextBeat);
+            playBeat(nextBeat);
+            console.log(`박자 ${nextBeat}/${timeSignature.beats} 재생됨`);
         };
 
         // 첫 번째 박자 즉시 재생
         playBeat(1);
         console.log(`첫 번째 박자 1/${timeSignature.beats} 재생됨`);
 
-        // 애니메이션 프레임 시작
-        requestAnimationFrame(runMetronome);
+        // setInterval 사용 (모바일에서 더 안정적)
+        intervalRef.current = setInterval(runMetronome, interval);
 
         return () => {
             isRunningRef.current = false;
+            if (intervalRef.current) {
+                clearInterval(intervalRef.current);
+                intervalRef.current = null;
+            }
         };
     }, [isPlaying, bpm, timeSignature]);
 
     const playBeat = (beat) => {
         try {
-            // 매번 새로운 Audio Context 생성
+            // 매번 새로운 Audio Context 생성 (모바일 호환성)
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
             const oscillator = audioContext.createOscillator();
@@ -129,14 +125,14 @@ const Metronome = () => {
             gainNode.connect(audioContext.destination);
 
             const frequency = beat === 1 ? 800 : 600;
-            const volume = beat === 1 ? 0.6 : 0.5;
+            const volume = beat === 1 ? 0.4 : 0.3; // 볼륨 감소
 
             oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
             gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.25);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15); // 지속시간 감소
 
             oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.25);
+            oscillator.stop(audioContext.currentTime + 0.15);
 
             console.log(`소리 재생됨 - 박자: ${beat}, 주파수: ${frequency}Hz, 볼륨: ${volume}`);
 
@@ -147,7 +143,7 @@ const Metronome = () => {
                 } catch (err) {
                     // 무시
                 }
-            }, 300);
+            }, 200);
         } catch (err) {
             console.error('소리 재생 실패:', err);
         }
@@ -203,6 +199,7 @@ const Metronome = () => {
                     <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 sm:text-3xl">
                         Yesol&apos;s Metronome
                     </h1>
+                    <p className="mt-1 text-xs text-gray-400">v0.1</p>
                 </div>
 
                 <div className="flex justify-center mb-0">

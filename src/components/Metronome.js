@@ -19,6 +19,32 @@ const Metronome = () => {
     const beatCountRef = useRef(1);
     const lastBeatTimeRef = useRef(0);
 
+    // 로컬스토리지에서 BPM 값 불러오기
+    useEffect(() => {
+        try {
+            const savedBpm = localStorage.getItem('metronome-bpm');
+            if (savedBpm) {
+                const parsedBpm = parseInt(savedBpm, 10);
+                if (parsedBpm >= 60 && parsedBpm <= 200) {
+                    setBpm(parsedBpm);
+                    console.log('저장된 BPM 불러옴:', parsedBpm);
+                }
+            }
+        } catch (err) {
+            console.log('로컬스토리지 BPM 불러오기 실패:', err);
+        }
+    }, []);
+
+    // BPM 값을 로컬스토리지에 저장하는 함수
+    const saveBpmToStorage = (bpmValue) => {
+        try {
+            localStorage.setItem('metronome-bpm', bpmValue.toString());
+            console.log('BPM 저장됨:', bpmValue);
+        } catch (err) {
+            console.log('로컬스토리지 BPM 저장 실패:', err);
+        }
+    };
+
     // Wake Lock 요청 함수 (개선된 버전)
     const requestWakeLock = async () => {
         try {
@@ -85,6 +111,9 @@ const Metronome = () => {
 
     const handleStart = async () => {
         if (isPlaying) return;
+
+        // BPM 값을 로컬스토리지에 저장
+        saveBpmToStorage(bpm);
 
         // AudioContext 초기화
         await initAudioContext();
@@ -270,7 +299,7 @@ const Metronome = () => {
                     <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 sm:text-3xl">
                         Yesol&apos;s Metronome
                     </h1>
-                    <p className="mt-1 text-xs text-gray-400">v0.2</p>
+                    <p className="mt-1 text-xs text-gray-400">v0.3</p>
                 </div>
 
                 <div className="flex justify-center mb-0">

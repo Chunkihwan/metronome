@@ -1,6 +1,6 @@
 {
     "name": "Yesol's Metronome",
-    "short_name": "Metronome",
+    "short_name": "솔트로놈",
     "description": "A beautiful and responsive metronome app",
     "start_url": "/",
     "display": "standalone",

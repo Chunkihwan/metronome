@@ -37,9 +37,9 @@ const MetronomeNeedle = ({ isPlaying, bpm, currentBeat, timeSignature }) => {
     }, [isPlaying, bpm, currentBeat, animationDuration, swingAngle]);
 
     return (
-        <div className="relative w-64 h-58 sm:w-80 sm:h-80  flex items-center justify-center">
+        <div className="flex relative justify-center items-center w-80 h-64">
             {/* 반원형 게이지 */}
-            <div className="absolute w-64 h-32 sm:w-80 sm:h-40  border-t-4 border-gray-600 rounded-t-full opacity-40"></div>
+            <div className="absolute w-80 h-40 rounded-t-full border-t-4 border-gray-600 opacity-40"></div>
 
             {/* 게이지 눈금들 */}
             {[...Array(9)].map((_, i) => (
@@ -56,31 +56,31 @@ const MetronomeNeedle = ({ isPlaying, bpm, currentBeat, timeSignature }) => {
 
             {/* 바늘 */}
             <div
-                className="absolute w-2 h-28 sm:h-32 lg:h-36 xl:h-40 bg-gradient-to-t from-cyan-400 to-cyan-300 origin-bottom transition-transform duration-75 ease-out glow"
+                className="absolute w-2 h-28 bg-gradient-to-t from-cyan-400 to-cyan-300 transition-transform duration-75 ease-out origin-bottom sm:h-32 lg:h-36 xl:h-40 glow"
                 style={{
                     transform: `rotate(${rotation}deg)`,
                     boxShadow: '0 0 20px rgba(0, 212, 255, 0.8)',
                 }}
             >
                 {/* 바늘 끝점 */}
-                <div className="absolute -top-3 -left-2 w-6 h-6 bg-cyan-400 rounded-full glow"></div>
+                <div className="absolute -left-2 -top-3 w-6 h-6 bg-cyan-400 rounded-full glow"></div>
             </div>
 
             {/* 중앙 점 */}
             {/* <div className="absolute w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-400 rounded-full glow"></div> */}
 
             {/* 박자 표시 */}
-            {/* <div className="absolute -bottom-16 sm:-bottom-20 lg:-bottom-24 text-center">
-                <div className="text-xs sm:text-sm lg:text-base text-gray-300 font-medium">
+            {/* <div className="absolute -bottom-16 text-center sm:-bottom-20 lg:-bottom-24">
+                <div className="text-xs font-medium text-gray-300 sm:text-sm lg:text-base">
                     Beat {currentBeat} of {timeSignature.beats}
                 </div>
-                {currentBeat === 1 && <div className="text-xs text-cyan-400 font-bold mt-1 glow">STRONG BEAT</div>}
+                {currentBeat === 1 && <div className="mt-1 text-xs font-bold text-cyan-400 glow">STRONG BEAT</div>}
             </div> */}
 
             {/* BPM 표시 */}
-            <div className="absolute top-2 text-center">
-                <div className="text-sm sm:text-base lg:text-lg text-cyan-400 font-bold glow p-1 px-2">{bpm} BPM</div>
-            </div>
+            {/* <div className="absolute top-2 text-center">
+                <div className="p-1 px-2 text-sm font-bold text-cyan-400 sm:text-base lg:text-lg glow">{bpm} BPM</div>
+            </div> */}
         </div>
     );
 };

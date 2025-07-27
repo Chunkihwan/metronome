@@ -20,6 +20,19 @@ export default function RootLayout({ children }) {
     return (
         <html lang="ko">
             <head>
+                {/* Google Analytics */}
+                <script async src="https://www.googletagmanager.com/gtag/js?id=G-8EFX6741WN"></script>
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+                            window.dataLayer = window.dataLayer || [];
+                            function gtag(){dataLayer.push(arguments);}
+                            gtag('js', new Date());
+                            gtag('config', 'G-8EFX6741WN');
+                        `,
+                    }}
+                />
+
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
                 <meta name="apple-mobile-web-app-title" content="Yesol's Metronome" />

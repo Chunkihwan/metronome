@@ -159,7 +159,7 @@ const Metronome = () => {
         <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-black flex items-center justify-center p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-sm bg-gray-900/50 backdrop-blur-sm rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl border border-gray-800">
                 <div className="text-center mb-4 sm:mb-6 lg:mb-8">
-                    <h1 className="text-2xl sm:text-3xl lg:text-6xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                    <h1 className="text-xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                         Yesol&apos;s Metronome
                     </h1>
                     {/* <p className="text-xl sm:text-2xl lg:text-4xl font-semibold text-cyan-400 glow">{bpm} BPM</p> */}

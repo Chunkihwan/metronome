@@ -37,9 +37,9 @@ const MetronomeNeedle = ({ isPlaying, bpm, currentBeat, timeSignature }) => {
     }, [isPlaying, bpm, currentBeat, animationDuration, swingAngle]);
 
     return (
-        <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 xl:w-[28rem] xl:h-[28rem] flex items-center justify-center">
+        <div className="relative w-64 h-58 sm:w-80 sm:h-80  flex items-center justify-center">
             {/* 반원형 게이지 */}
-            <div className="absolute w-64 h-32 sm:w-80 sm:h-40 lg:w-96 lg:h-48 xl:w-[28rem] xl:h-56 border-t-4 border-gray-600 rounded-t-full opacity-40"></div>
+            <div className="absolute w-64 h-32 sm:w-80 sm:h-40  border-t-4 border-gray-600 rounded-t-full opacity-40"></div>
 
             {/* 게이지 눈금들 */}
             {[...Array(9)].map((_, i) => (

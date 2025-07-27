@@ -18,11 +18,11 @@ const BpmControl = ({ bpm, onBpmChange }) => {
     };
 
     return (
-        <div className="flex flex-col items-center space-y-4 sm:space-y-6 lg:space-y-8">
-            <div className="flex items-center space-x-4 sm:space-x-6 lg:space-x-8">
+        <div className="flex flex-col items-center space-y-4 sm:space-y-6 ">
+            <div className="flex items-center space-x-4 sm:space-x-6 ">
                 <button
                     onClick={handleDecrease}
-                    className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white rounded-full flex items-center justify-center text-lg sm:text-xl lg:text-2xl font-bold transition-all duration-200 button-hover shadow-lg"
+                    className="w-10 h-10 sm:w-12 sm:h-12  bg-gradient-to-br from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white rounded-full flex items-center justify-center text-lg sm:text-xl lg:text-2xl font-bold transition-all duration-200 button-hover shadow-lg"
                     disabled={bpm <= 40}
                 >
                     -
@@ -35,14 +35,14 @@ const BpmControl = ({ bpm, onBpmChange }) => {
 
                 <button
                     onClick={handleIncrease}
-                    className="w-10 h-10 sm:w-12 sm:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white rounded-full flex items-center justify-center text-lg sm:text-xl lg:text-2xl font-bold transition-all duration-200 button-hover shadow-lg"
+                    className="w-10 h-10 sm:w-12 sm:h-12  bg-gradient-to-br from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white rounded-full flex items-center justify-center text-lg sm:text-xl lg:text-2xl font-bold transition-all duration-200 button-hover shadow-lg"
                     disabled={bpm >= 200}
                 >
                     +
                 </button>
             </div>
 
-            <div className="w-48 sm:w-64 lg:w-80 xl:w-96">
+            <div className="w-48 sm:w-64 ">
                 <input
                     type="range"
                     min="40"

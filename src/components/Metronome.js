@@ -299,7 +299,7 @@ const Metronome = () => {
                     <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 sm:text-3xl">
                         Yesol&apos;s Metronome
                     </h1>
-                    <p className="mt-1 text-xs text-gray-400">v0.3</p>
+                    <p className="text-xs text-gray-400 mt-1">v0.4</p>
                 </div>
 
                 <div className="flex justify-center mb-0">

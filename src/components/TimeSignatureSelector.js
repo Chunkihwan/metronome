@@ -38,10 +38,10 @@ const TimeSignatureSelector = ({ timeSignature, onTimeSignatureChange, onBpmChan
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="px-4 py-1.5 bg-gradient-to-r from-gray-800 to-gray-700 hover:from-gray-700 hover:to-gray-600 text-white rounded-xl transition-all duration-200 button-hover shadow-lg flex items-center space-x-2 sm:space-x-2"
+                className="flex items-center px-4 py-1.5 space-x-2 text-white bg-gradient-to-r from-gray-800 to-gray-700 rounded-xl shadow-lg transition-all duration-200 hover:from-gray-700 hover:to-gray-600 button-hover sm:space-x-2"
             >
                 <span className="text-base font-medium">박자</span>
-                <span className="text-cyan-400 font-bold text-sm ">{currentLabel}</span>
+                <span className="text-sm font-bold text-cyan-400">{currentLabel}</span>
                 {/* <svg
                     className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     fill="none"
@@ -55,17 +55,17 @@ const TimeSignatureSelector = ({ timeSignature, onTimeSignatureChange, onBpmChan
             {isOpen && (
                 <>
                     {/* 배경 오버레이 */}
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setIsOpen(false)} />
+                    <div className="fixed inset-0 z-40 backdrop-blur-sm bg-black/50" onClick={() => setIsOpen(false)} />
 
                     {/* 모달 팝업 */}
-                    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-                        <div className="bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl w-full max-w-md">
+                    <div className="flex fixed inset-0 z-50 justify-center items-center p-4">
+                        <div className="w-full max-w-md rounded-2xl border border-gray-700 shadow-2xl backdrop-blur-sm bg-gray-900/95">
                             {/* 헤더 */}
-                            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                            <div className="flex justify-between items-center p-4 border-b border-gray-700">
                                 <h3 className="text-lg font-bold text-white">박자 선택</h3>
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="w-8 h-8 bg-gray-800 hover:bg-gray-700 text-white rounded-full flex items-center justify-center transition-colors"
+                                    className="flex justify-center items-center w-8 h-8 text-white bg-gray-800 rounded-full transition-colors hover:bg-gray-700"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path
@@ -90,14 +90,14 @@ const TimeSignatureSelector = ({ timeSignature, onTimeSignatureChange, onBpmChan
                                                 : 'text-white hover:text-cyan-300'
                                         }`}
                                     >
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex justify-between items-center">
                                             <div className="flex flex-col">
                                                 <span className="text-base font-medium">{ts.label}</span>
                                                 <span className="text-xs text-gray-400">기본 BPM: {ts.defaultBpm}</span>
                                             </div>
                                             {ts.beats === timeSignature.beats &&
                                                 ts.beatType === timeSignature.beatType && (
-                                                    <span className="text-cyan-400 text-lg">✓</span>
+                                                    <span className="text-lg text-cyan-400">✓</span>
                                                 )}
                                         </div>
                                     </button>
@@ -108,7 +108,7 @@ const TimeSignatureSelector = ({ timeSignature, onTimeSignatureChange, onBpmChan
                             <div className="p-4 border-t border-gray-700">
                                 <button
                                     onClick={() => setIsOpen(false)}
-                                    className="w-full py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                                    className="py-2 w-full text-white bg-gray-800 rounded-lg transition-colors hover:bg-gray-700"
                                 >
                                     취소
                                 </button>

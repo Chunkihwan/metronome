@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import BpmControl from './BpmControl';
 import PlayControl from './PlayControl';
 import MetronomeNeedle from './MetronomeNeedle';
@@ -183,7 +183,7 @@ const Metronome = () => {
         };
     }, [isPlaying, bpm, timeSignature]);
 
-    const playBeat = async (beat) => {
+    const playBeat = useCallback(async (beat) => {
         try {
             // AudioContext 사용 시도
             if (audioContextRef.current && audioContextRef.current.state === 'running') {
@@ -212,7 +212,7 @@ const Metronome = () => {
             console.error('소리 재생 실패, HTML5 Audio로 대체:', err);
             playBeepSound(beat);
         }
-    };
+    }, []);
 
     // HTML5 Audio 대안
     const playBeepSound = (beat) => {
@@ -293,13 +293,13 @@ const Metronome = () => {
     }, [isPlaying]);
 
     return (
-        <div className="flex justify-center items-center w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-black md:p-6">
-            <div className="p-4 w-full max-w-sm rounded-3xl border border-gray-800 shadow-2xl backdrop-blur-sm bg-gray-900/50 md:p-6">
+        <div className="flex justify-center items-center w-full bg-gradient-to-br from-black via-gray-900 to-black min-h-dvh md:h-full md:p-6">
+            <div className="p-4 w-full max-w-sm backdrop-blur-sm md:h-auto md:shadow-2xl md:rounded-3xl md:border-gray-800 md:border md:bg-gray-900/50 md:p-6">
                 <div className="mt-2 text-center">
                     <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 sm:text-3xl">
                         Yesol&apos;s Metronome
                     </h1>
-                    <p className="text-xs text-gray-400 mt-1">v0.4</p>
+                    <p className="mt-1 text-xs text-gray-400">v0.2.0</p>
                 </div>
 
                 <div className="flex justify-center mb-0">

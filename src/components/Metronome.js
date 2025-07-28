@@ -19,64 +19,54 @@ const Metronome = () => {
     const beatCountRef = useRef(1);
     const lastBeatTimeRef = useRef(0);
 
-    // 로컬스토리지에서 BPM 값 불러오기
+    // 로컬스토리지에서 BPM 값 불러오기 (SSR 안전)
     useEffect(() => {
-        try {
-            const savedBpm = localStorage.getItem('metronome-bpm');
-            if (savedBpm) {
-                const parsedBpm = parseInt(savedBpm, 10);
-                if (parsedBpm >= 60 && parsedBpm <= 200) {
-                    setBpm(parsedBpm);
-                    console.log('저장된 BPM 불러옴:', parsedBpm);
+        if (typeof window !== 'undefined') {
+            try {
+                const savedBpm = localStorage.getItem('metronome-bpm');
+                if (savedBpm) {
+                    const parsedBpm = parseInt(savedBpm, 10);
+                    if (parsedBpm >= 60 && parsedBpm <= 200) {
+                        setBpm(parsedBpm);
+                        console.log('저장된 BPM 불러옴:', parsedBpm);
+                    }
                 }
+            } catch (err) {
+                console.log('로컬스토리지 BPM 불러오기 실패:', err);
             }
-        } catch (err) {
-            console.log('로컬스토리지 BPM 불러오기 실패:', err);
         }
     }, []);
 
-    // BPM 값을 로컬스토리지에 저장하는 함수
+    // BPM 값을 로컬스토리지에 저장하는 함수 (SSR 안전)
     const saveBpmToStorage = (bpmValue) => {
-        try {
-            localStorage.setItem('metronome-bpm', bpmValue.toString());
-            console.log('BPM 저장됨:', bpmValue);
-        } catch (err) {
-            console.log('로컬스토리지 BPM 저장 실패:', err);
+        if (typeof window !== 'undefined') {
+            try {
+                localStorage.setItem('metronome-bpm', bpmValue.toString());
+                console.log('BPM 저장됨:', bpmValue);
+            } catch (err) {
+                console.log('로컬스토리지 BPM 저장 실패:', err);
+            }
         }
     };
 
-    // Wake Lock 요청 함수 (개선된 버전)
+    // Wake Lock 요청 함수 (SSR 안전)
     const requestWakeLock = async () => {
-        try {
-            // Wake Lock API가 지원되는 경우
-            if ('wakeLock' in navigator) {
-                wakeLockRef.current = await navigator.wakeLock.request('screen');
-                console.log('Wake Lock 활성화됨');
+        if (typeof window !== 'undefined') {
+            try {
+                // Safari에서는 Wake Lock API를 지원하지 않으므로 안전하게 처리
+                if ('wakeLock' in navigator && navigator.wakeLock) {
+                    wakeLockRef.current = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock 활성화됨');
 
-                wakeLockRef.current.addEventListener('release', () => {
-                    console.log('Wake Lock 해제됨');
-                });
-            } else {
-                // 대안: 비디오 요소를 사용한 화면 켜짐 유지
-                const video = document.createElement('video');
-                video.muted = true;
-                video.loop = true;
-                video.autoplay = true;
-                video.style.display = 'none';
-                video.src = 'data:video/mp4;base64,AAAAHGZ0eXBNUDQyAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA==';
-                document.body.appendChild(video);
-                video.play();
-                console.log('비디오 기반 화면 켜짐 유지 활성화됨');
-            }
-        } catch (err) {
-            console.log('Wake Lock 요청 실패:', err);
-
-            // 마지막 대안: 주기적으로 NoSleep 이벤트 발생
-            setInterval(() => {
-                if (isRunningRef.current) {
-                    document.body.click();
+                    wakeLockRef.current.addEventListener('release', () => {
+                        console.log('Wake Lock 해제됨');
+                    });
+                } else {
+                    console.log('Wake Lock API 미지원 (Safari) - 화면 켜짐 유지 비활성화');
                 }
-            }, 30000);
+            } catch (err) {
+                console.log('Wake Lock 요청 실패 (Safari 안전 모드):', err);
+            }
         }
     };
 
@@ -92,17 +82,30 @@ const Metronome = () => {
         }
     };
 
-    // AudioContext 초기화 (재사용)
+    // AudioContext 초기화 (SSR 안전)
     const initAudioContext = async () => {
-        if (!audioContextRef.current || audioContextRef.current.state === 'closed') {
+        if (typeof window !== 'undefined' && (!audioContextRef.current || audioContextRef.current.state === 'closed')) {
             try {
-                audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
+                // Safari에서 안전하게 AudioContext 생성
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContextClass) {
+                    console.log('AudioContext 미지원 (Safari)');
+                    return null;
+                }
+
+                audioContextRef.current = new AudioContextClass();
+
+                // Safari에서는 사용자 상호작용 후에만 resume 가능
                 if (audioContextRef.current.state === 'suspended') {
-                    await audioContextRef.current.resume();
+                    try {
+                        await audioContextRef.current.resume();
+                    } catch (resumeErr) {
+                        console.log('AudioContext resume 실패 (Safari):', resumeErr);
+                    }
                 }
                 console.log('AudioContext 초기화됨:', audioContextRef.current.state);
             } catch (err) {
-                console.error('AudioContext 초기화 실패:', err);
+                console.error('AudioContext 초기화 실패 (Safari 안전 모드):', err);
                 return null;
             }
         }
@@ -184,68 +187,40 @@ const Metronome = () => {
     }, [isPlaying, bpm, timeSignature]);
 
     const playBeat = useCallback(async (beat) => {
-        try {
-            // AudioContext 사용 시도
-            if (audioContextRef.current && audioContextRef.current.state === 'running') {
-                const oscillator = audioContextRef.current.createOscillator();
-                const gainNode = audioContextRef.current.createGain();
+        if (typeof window !== 'undefined') {
+            try {
+                // AudioContext 사용 시도 (Safari 안전 모드)
+                if (audioContextRef.current && audioContextRef.current.state === 'running') {
+                    const oscillator = audioContextRef.current.createOscillator();
+                    const gainNode = audioContextRef.current.createGain();
 
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContextRef.current.destination);
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContextRef.current.destination);
 
-                const frequency = beat === 1 ? 800 : 600;
-                const volume = beat === 1 ? 0.3 : 0.2;
+                    const frequency = beat === 1 ? 800 : 600;
+                    const volume = beat === 1 ? 0.3 : 0.2;
 
-                oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-                gainNode.gain.setValueAtTime(volume, audioContextRef.current.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.1);
+                    oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
+                    gainNode.gain.setValueAtTime(volume, audioContextRef.current.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.1);
 
-                oscillator.start(audioContextRef.current.currentTime);
-                oscillator.stop(audioContextRef.current.currentTime + 0.1);
+                    oscillator.start(audioContextRef.current.currentTime);
+                    oscillator.stop(audioContextRef.current.currentTime + 0.1);
 
-                console.log(`AudioContext 소리 재생됨 - 박자: ${beat}`);
-            } else {
-                // 대안: HTML5 Audio 사용
-                playBeepSound(beat);
+                    console.log(`AudioContext 소리 재생됨 - 박자: ${beat}`);
+                } else {
+                    // Safari에서는 소리 재생 비활성화
+                    console.log(`소리 재생 비활성화 (Safari) - 박자: ${beat}`);
+                }
+            } catch (err) {
+                console.error('소리 재생 실패 (Safari 안전 모드):', err);
             }
-        } catch (err) {
-            console.error('소리 재생 실패, HTML5 Audio로 대체:', err);
-            playBeepSound(beat);
         }
     }, []);
 
-    // HTML5 Audio 대안
+    // Safari에서는 소리 재생 비활성화
     const playBeepSound = (beat) => {
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            const frequency = beat === 1 ? 800 : 600;
-            const volume = beat === 1 ? 0.3 : 0.2;
-
-            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.1);
-
-            setTimeout(() => {
-                try {
-                    audioContext.close();
-                } catch (err) {
-                    // 무시
-                }
-            }, 150);
-
-            console.log(`HTML5 Audio 소리 재생됨 - 박자: ${beat}`);
-        } catch (err) {
-            console.error('HTML5 Audio도 실패:', err);
-        }
+        console.log(`소리 재생 비활성화 (Safari) - 박자: ${beat}`);
     };
 
     const handleBpmChange = (newBpm) => {
@@ -258,38 +233,40 @@ const Metronome = () => {
         beatCountRef.current = 1;
     };
 
-    // 페이지 가시성 변경 시 Wake Lock 재요청
+    // 페이지 가시성 변경 시 Wake Lock 재요청 (SSR 안전)
     useEffect(() => {
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible' && isPlaying) {
-                requestWakeLock();
-                // AudioContext 재시작
-                if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
-                    audioContextRef.current.resume();
+        if (typeof window !== 'undefined') {
+            const handleVisibilityChange = () => {
+                if (document.visibilityState === 'visible' && isPlaying) {
+                    requestWakeLock();
+                    // AudioContext 재시작
+                    if (audioContextRef.current && audioContextRef.current.state === 'suspended') {
+                        audioContextRef.current.resume();
+                    }
                 }
-            }
-        };
+            };
 
-        const handlePageHide = () => {
-            // 페이지가 숨겨질 때 리소스 정리하지 않음 (백그라운드 재생 유지)
-        };
+            const handlePageHide = () => {
+                // 페이지가 숨겨질 때 리소스 정리하지 않음 (백그라운드 재생 유지)
+            };
 
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        window.addEventListener('pagehide', handlePageHide);
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('pagehide', handlePageHide);
 
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-            window.removeEventListener('pagehide', handlePageHide);
-            isRunningRef.current = false;
+            return () => {
+                document.removeEventListener('visibilitychange', handleVisibilityChange);
+                window.removeEventListener('pagehide', handlePageHide);
+                isRunningRef.current = false;
 
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
+                if (intervalRef.current) {
+                    clearInterval(intervalRef.current);
+                    intervalRef.current = null;
+                }
 
-            // AudioContext는 정리하지 않음 (재사용을 위해)
-            releaseWakeLock();
-        };
+                // AudioContext는 정리하지 않음 (재사용을 위해)
+                releaseWakeLock();
+            };
+        }
     }, [isPlaying]);
 
     return (

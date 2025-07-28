@@ -32,16 +32,12 @@ export default function RootLayout({ children }) {
                 <link rel="icon" href="/favicon.ico" sizes="any" />
 
                 {/* iOS 아이콘 */}
-                <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
-                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.svg" />
-                <link rel="apple-touch-icon" sizes="152x152" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="144x144" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="120x120" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="114x114" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="76x76" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="72x72" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="60x60" href="/icon-192.svg" />
-                <link rel="apple-touch-icon" sizes="57x57" href="/icon-192.svg" />
+                <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+                <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png" />
+                <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon.png" />
+                <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png" />
+                <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon.png" />
 
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -57,8 +53,8 @@ export default function RootLayout({ children }) {
                 />
 
                 {/* Google Analytics */}
-                <Script src="https://www.googletagmanager.com/gtag/js?id=G-8EFX6741WN" strategy="afterInteractive" />
-                <Script id="google-analytics" strategy="afterInteractive">
+                <Script src="https://www.googletagmanager.com/gtag/js?id=G-8EFX6741WN" strategy="lazyOnload" />
+                <Script id="google-analytics" strategy="lazyOnload">
                     {`
                         window.dataLayer = window.dataLayer || [];
                         function gtag(){dataLayer.push(arguments);}
@@ -68,7 +64,7 @@ export default function RootLayout({ children }) {
                 </Script>
 
                 {/* Service Worker 등록 */}
-                <Script id="service-worker" strategy="afterInteractive">
+                <Script id="service-worker" strategy="lazyOnload">
                     {`
                         if ('serviceWorker' in navigator) {
                             window.addEventListener('load', function() {

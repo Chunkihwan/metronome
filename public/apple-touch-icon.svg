@@ -1,1 +1,22 @@
- 
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 원 -->
+  <circle cx="90" cy="90" r="85" fill="#000000"/>
+  
+  <!-- 메트로놈 베이스 -->
+  <rect x="45" y="135" width="90" height="30" rx="6" fill="#1e293b"/>
+  
+  <!-- 메트로놈 몸체 -->
+  <path d="M67.5 135 L90 22.5 L112.5 135 Z" fill="#0ea5e9"/>
+  
+  <!-- 메트로놈 바늘 -->
+  <line x1="90" y1="45" x2="123.75" y2="67.5" stroke="#fbbf24" stroke-width="9" stroke-linecap="round"/>
+  
+  <!-- 중심점 -->
+  <circle cx="90" cy="45" r="9" fill="#ef4444"/>
+  
+  <!-- 눈금 -->
+  <line x1="67.5" y1="78.75" x2="78.75" y2="78.75" stroke="#64748b" stroke-width="4.5"/>
+  <line x1="67.5" y1="101.25" x2="78.75" y2="101.25" stroke="#64748b" stroke-width="4.5"/>
+  <line x1="101.25" y1="78.75" x2="112.5" y2="78.75" stroke="#64748b" stroke-width="4.5"/>
+  <line x1="101.25" y1="101.25" x2="112.5" y2="101.25" stroke="#64748b" stroke-width="4.5"/>
+</svg> 

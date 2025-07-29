@@ -191,23 +191,34 @@ const Metronome = () => {
             try {
                 // AudioContext 사용 시도 (Safari 안전 모드)
                 if (audioContextRef.current && audioContextRef.current.state === 'running') {
-                    const oscillator = audioContextRef.current.createOscillator();
-                    const gainNode = audioContextRef.current.createGain();
+                    const ctx = audioContextRef.current;
+                    const now = ctx.currentTime;
 
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContextRef.current.destination);
+                    // 1. oscillator 생성
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
 
-                    const frequency = beat === 1 ? 800 : 600;
-                    const volume = beat === 1 ? 0.3 : 0.2;
+                    // 2. 톤 차이로 1박 / n박 구분
+                    const frequency = beat === 1 ? 1000 : 750;
+                    const volume = beat === 1 ? 1.0 : 0.8;
 
-                    oscillator.frequency.setValueAtTime(frequency, audioContextRef.current.currentTime);
-                    gainNode.gain.setValueAtTime(volume, audioContextRef.current.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContextRef.current.currentTime + 0.1);
+                    // 3. oscillator 설정
+                    osc.type = 'triangle'; // 아날로그틱하고 부드러운 "툭" 소리
+                    osc.frequency.setValueAtTime(frequency, now);
 
-                    oscillator.start(audioContextRef.current.currentTime);
-                    oscillator.stop(audioContextRef.current.currentTime + 0.1);
+                    // 4. gain envelope 설정 (짧고 깔끔하게)
+                    gain.gain.setValueAtTime(volume, now);
+                    gain.gain.linearRampToValueAtTime(0.001, now + 0.04); // 40ms 내에 사라짐
 
-                    console.log(`AudioContext 소리 재생됨 - 박자: ${beat}`);
+                    // 5. 연결
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    // 6. 실행
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+
+                    console.log(`아날로그 스타일 메트로놈 소리 - 박자: ${beat}, 주파수: ${frequency}Hz`);
                 } else {
                     // Safari에서는 소리 재생 비활성화
                     console.log(`소리 재생 비활성화 (Safari) - 박자: ${beat}`);

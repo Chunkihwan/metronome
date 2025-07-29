@@ -200,7 +200,7 @@ const Metronome = () => {
 
                     // 2. 톤 차이로 1박 / n박 구분
                     const frequency = beat === 1 ? 1000 : 750;
-                    const volume = beat === 1 ? 1.0 : 0.8;
+                    const volume = beat === 1 ? 5.0 : 3.8;
 
                     // 3. oscillator 설정
                     osc.type = 'triangle'; // 아날로그틱하고 부드러운 "툭" 소리
